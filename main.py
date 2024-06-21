@@ -223,6 +223,44 @@ class LostAndFoundApp:
                 widget.set('')
         self.found_image_path_var.set("")
 
+def upload_lost_image(self):
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            self.lost_image_path_var.set(file_path)
+
+    def reset_lost_image(self):
+        self.lost_image_path_var.set("")
+
+    def upload_found_image(self):
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            self.found_image_path_var.set(file_path)
+
+    def reset_found_image(self):
+        self.found_image_path_var.set("")
+
+    def report_lost_item(self):
+        name = self.lost_name_entry.get()
+        if not name:
+            messagebox.showerror("Error", "Name is required!")
+            return
+
+        item_type = self.lost_item_type_var.get()
+        description = self.lost_description_entry.get()
+        brand = self.lost_brand_var.get()
+        model = self.lost_model_var.get()
+        color = self.lost_color_var.get()
+        serial_number = self.lost_serial_number_entry.get()
+        id_number = self.lost_id_number_entry.get()
+        amount = self.lost_amount_entry.get()
+        mobile_number = self.lost_mobile_number_entry.get()
+        image_path = self.lost_image_path_var.get()
+        phone_number = self.lost_phone_number_entry.get()
+
+        lost_item = Item(item_type, description, brand, model, color, serial_number, id_number, amount, mobile_number, image_path, name, phone_number)
+        self.lost_items.append(lost_item)
+        messagebox.showinfo("Success", "Lost item reported successfully!")
+
 if _name_ == "_main_":
     root = tk.Tk()
     app = LostAndFoundApp(root)
