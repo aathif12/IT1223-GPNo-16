@@ -208,3 +208,22 @@ class LostAndFoundApp:
         }
         self.found_model_combobox['values'] = models.get(brand, [])
         self.found_model_combobox.set('')
+        def reset_fields(self):
+        for widget in self.lost_frame.winfo_children():
+            if isinstance(widget, ttk.Entry):
+                widget.delete(0, tk.END)
+            elif isinstance(widget, ttk.Combobox):
+                widget.set('')
+        self.lost_image_path_var.set("")
+
+        for widget in self.found_frame.winfo_children():
+            if isinstance(widget, ttk.Entry):
+                widget.delete(0, tk.END)
+            elif isinstance(widget, ttk.Combobox):
+                widget.set('')
+        self.found_image_path_var.set("")
+
+if _name_ == "_main_":
+    root = tk.Tk()
+    app = LostAndFoundApp(root)
+    root.mainloop()
