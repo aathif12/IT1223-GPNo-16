@@ -183,3 +183,27 @@ class LostAndFoundApp:
 
         self.reset_button = ttk.Button(self.match_frame, text="Reset Fields", command=self.reset_fields)
         self.reset_button.pack(padx=10, pady=10)
+
+        def update_lost_brand_model_options(self, event):
+        item_type = self.lost_item_type_var.get()
+        brands = {
+            "Laptop": ["Apple", "Dell", "HP"],
+            "Phone": ["Apple", "Samsung", "Google"],
+            "Wallet": [],
+            "Student ID": []
+        }
+        self.lost_brand_combobox['values'] = brands.get(item_type, [])
+        self.lost_brand_combobox.set('')
+        self.update_lost_model_options(event)
+
+    def update_found_brand_model_options(self, event):
+        item_type = self.found_item_type_var.get()
+        brands = {
+            "Laptop": ["Apple", "Dell", "HP"],
+            "Phone": ["Apple", "Samsung", "Google"],
+            "Wallet": [],
+            "Student ID": []
+        }
+        self.found_brand_combobox['values'] = brands.get(item_type, [])
+        self.found_brand_combobox.set('')
+        self.update_found_model_options(event)
