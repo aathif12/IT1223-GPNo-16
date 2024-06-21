@@ -184,8 +184,31 @@ class LostAndFoundApp:
         self.reset_button = ttk.Button(self.match_frame, text="Reset Fields", command=self.reset_fields)
         self.reset_button.pack(padx=10, pady=10)
 
+    def update_lost_brand_model_options(self, event):
+        item_type = self.lost_item_type_var.get()
+        brands = {
+            "Laptop": ["Apple", "Dell", "HP"],
+            "Phone": ["Apple", "Samsung", "Google"],
+            "Wallet": [],
+            "Student ID": []
+        }
+        self.lost_brand_combobox['values'] = brands.get(item_type, [])
+        self.lost_brand_combobox.set('')
+        self.update_lost_model_options(event)
 
-        def update_lost_model_options(self, event):
+    def update_found_brand_model_options(self, event):
+        item_type = self.found_item_type_var.get()
+        brands = {
+            "Laptop": ["Apple", "Dell", "HP"],
+            "Phone": ["Apple", "Samsung", "Google"],
+            "Wallet": [],
+            "Student ID": []
+        }
+        self.found_brand_combobox['values'] = brands.get(item_type, [])
+        self.found_brand_combobox.set('')
+        self.update_found_model_options(event)
+
+    def update_lost_model_options(self, event):
         brand = self.lost_brand_var.get()
         models = {
             "Apple": ["MacBook Pro", "iPhone X"],
@@ -208,22 +231,8 @@ class LostAndFoundApp:
         }
         self.found_model_combobox['values'] = models.get(brand, [])
         self.found_model_combobox.set('')
-        def reset_fields(self):
-        for widget in self.lost_frame.winfo_children():
-            if isinstance(widget, ttk.Entry):
-                widget.delete(0, tk.END)
-            elif isinstance(widget, ttk.Combobox):
-                widget.set('')
-        self.lost_image_path_var.set("")
 
-        for widget in self.found_frame.winfo_children():
-            if isinstance(widget, ttk.Entry):
-                widget.delete(0, tk.END)
-            elif isinstance(widget, ttk.Combobox):
-                widget.set('')
-        self.found_image_path_var.set("")
-
-def upload_lost_image(self):
+    def upload_lost_image(self):
         file_path = filedialog.askopenfilename()
         if file_path:
             self.lost_image_path_var.set(file_path)
@@ -261,7 +270,75 @@ def upload_lost_image(self):
         self.lost_items.append(lost_item)
         messagebox.showinfo("Success", "Lost item reported successfully!")
 
-if _name_ == "_main_":
+    def report_found_item(self):
+        name = self.found_name_entry.get()
+        if not name:
+            messagebox.showerror("Error", "Name is required!")
+            return
+
+        item_type = self.found_item_type_var.get()
+        description = self.found_description_entry.get()
+        brand = self.found_brand_var.get()
+        model = self.found_model_var.get()
+        color = self.found_color_var.get()
+        serial_number = self.found_serial_number_entry.get()
+        id_number = self.found_id_number_entry.get()
+        amount = self.found_amount_entry.get()
+        mobile_number = self.found_mobile_number_entry.get()
+        image_path = self.found_image_path_var.get()
+        phone_number = self.found_phone_number_entry.get()
+
+        found_item = Item(item_type, description, brand, model, color, serial_number, id_number, amount, mobile_number, image_path, name, phone_number)
+        self.found_items.append(found_item)
+        messagebox.showinfo("Success", "Found item reported successfully!")
+
+    def search_matches(self):
+        matches = []
+        for lost_item in self.lost_items:
+            for found_item in self.found_items:
+                if (
+                    lost_item.item_type == found_item.item_type and
+                    (lost_item.brand == found_item.brand or not lost_item.brand or not found_item.brand) and
+                    (lost_item.model == found_item.model or not lost_item.model or not found_item.model) and
+                    (lost_item.color == found_item.color or not lost_item.color or not found_item.color) and
+                    (lost_item.serial_number == found_item.serial_number or not lost_item.serial_number or not found_item.serial_number) and
+                    (lost_item.id_number == found_item.id_number or not lost_item.id_number or not found_item.id_number) and
+                    (lost_item.amount == found_item.amount or not lost_item.amount or not found_item.amount) and
+                    (lost_item.mobile_number == found_item.mobile_number or not lost_item.mobile_number or not found_item.mobile_number)
+                ):
+                    if lost_item.image_path and found_item.image_path:
+                        lost_image = Image.open(lost_item.image_path)
+                        found_image = Image.open(found_item.image_path)
+                        if imagehash.average_hash(lost_image) - imagehash.average_hash(found_image) < 10:
+                            matches.append((lost_item, found_item))
+                    else:
+                        matches.append((lost_item, found_item))
+
+        if matches:
+            match_text = ""
+            for lost_item, found_item in matches:
+                match_text += f"Lost Item: {lost_item.item_type}, Name: {lost_item.name}, Phone Number: {lost_item.phone_number}\n"
+                match_text += f"Found Item: {found_item.item_type}, Name: {found_item.name}, Phone Number: {found_item.phone_number}\n\n"
+            messagebox.showinfo("Matches Found", match_text)
+        else:
+            messagebox.showinfo("No Matches Found", "No matches found for the reported items.")
+
+    def reset_fields(self):
+        for widget in self.lost_frame.winfo_children():
+            if isinstance(widget, ttk.Entry):
+                widget.delete(0, tk.END)
+            elif isinstance(widget, ttk.Combobox):
+                widget.set('')
+        self.lost_image_path_var.set("")
+
+        for widget in self.found_frame.winfo_children():
+            if isinstance(widget, ttk.Entry):
+                widget.delete(0, tk.END)
+            elif isinstance(widget, ttk.Combobox):
+                widget.set('')
+        self.found_image_path_var.set("")
+
+if __name__ == "__main__":
     root = tk.Tk()
     app = LostAndFoundApp(root)
     root.mainloop()
